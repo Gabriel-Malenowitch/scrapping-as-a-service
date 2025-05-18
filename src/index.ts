@@ -91,8 +91,8 @@ app.post('/face-get-ads-numbers', async (req, res) => {
     // Faz o scrapping diretamente no contexto do navegador
     const result = await page.evaluate(() => {
       const abc = Array.from(document.querySelectorAll('div,span,p,li,a,h1,h2,h3,h4,h5,h6'))
-      const el = abc.find(e => /~\s*\d+\s*resultados?/i.test(String(e.textContent)));
-      const match = /~\s*(\d+)\s*resultados?/i.exec(el?.textContent || '');
+      const el = abc.find(e => /~\s*\d+\s*results?/i.test(String(e.textContent)));
+      const match = /~\s*(\d+)\s*results?/i.exec(el?.textContent || '');
       
       console.log("abc", abc)
       console.log("el", el)

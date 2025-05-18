@@ -33,14 +33,71 @@ app.post('/fetch-html', async (req, res) => {
       timeout: 30000
     });
     
-    // Obter o conteúdo HTML da página
-    const html = await page.content();
+    let result;
+    // if (querySelector) {
+    //   // Faz o scrapping diretamente no contexto do navegador
+    //   result = await page.$eval(querySelector, els => els.map(el => el.outerHTML));
+    //   await browser.close();
+    //   return res.json({ results: result });
+    // } else {
+      // Retorna o HTML completo
+      const html = await page.content();
+      await browser.close();
+      return res.json({ html });
+    // }
+
+  } catch (error: unknown) {
+    console.error('Error fetching HTML:', error);
     
-    // Fechar o navegador
+    // Tratamento seguro do erro
+    let errorMessage = 'Unknown error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error && typeof error === 'object' && 'message' in error) {
+      errorMessage = String(error.message);
+    }
+    
+    res.status(500).json({ error: 'Failed to fetch HTML', details: errorMessage });
+  }
+});
+
+app.post('/face-get-ads-numbers', async (req, res) => {
+  try {
+    const { url } = req.body;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+    
+    console.log(`Fetching HTML from: ${url}`);
+    
+    // Inicializar o navegador Puppeteer
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    
+    // Criar uma nova página
+    const page = await browser.newPage();
+    
+    // Navegar para a URL fornecida
+    await page.goto(url, {
+      waitUntil: 'networkidle2',
+      timeout: 30000
+    });
+    
+    // Faz o scrapping diretamente no contexto do navegador
+    const result = await page.evaluate(() => {
+      const el = Array.from(document.querySelectorAll('div,span,p,li,a,h1,h2,h3,h4,h5,h6'))
+        .find(e => /~\s*\d+\s*resultados?/i.test(String(e.textContent)));
+      const match = /~\s*(\d+)\s*resultados?/i.exec(el?.textContent || '');
+      return match ? match[1] : null;
+    });
     await browser.close();
-    
-    // Retornar o HTML como resposta
-    res.send(html);
+    return res.json({ results: result });
+
   } catch (error: unknown) {
     console.error('Error fetching HTML:', error);
     

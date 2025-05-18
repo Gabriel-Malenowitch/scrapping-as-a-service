@@ -1,8 +1,24 @@
+import axios from 'axios';
 import express from 'express';
 import puppeteer from 'puppeteer';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const log = (message: string) => {
+  // 970315961
+  // 7770155542:AAFzy1s4maCcQpB9Qn97InAnSiRa1rBlY_s
+
+
+  const TOKEN = '7770155542:AAFzy1s4maCcQpB9Qn97InAnSiRa1rBlY_s';
+  const CHAT_ID = 970315961
+
+  console.log('oi')
+  axios.post(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+    chat_id: CHAT_ID,
+    text: message
+  }) //.then(e=>console.log(e)).catch(e=>console.log("eerr", e))
+}
 
 // Middleware para processar JSON
 app.use(express.json());
@@ -16,7 +32,7 @@ app.post('/fetch-html', async (req, res) => {
       return res.status(400).json({ error: 'URL is required' });
     }
     
-    console.log(`Fetching HTML from: ${url}`);
+    log(`Fetching HTML from: ${url}`);
     
     // Inicializar o navegador Puppeteer
     const browser = await puppeteer.launch({
@@ -47,7 +63,7 @@ app.post('/fetch-html', async (req, res) => {
     // }
 
   } catch (error: unknown) {
-    console.error('Error fetching HTML:', error);
+    log('Error fetching HTML:' + JSON.stringify(error));
     
     // Tratamento seguro do erro
     let errorMessage = 'Unknown error';
@@ -71,7 +87,7 @@ app.post('/face-get-ads-numbers', async (req, res) => {
       return res.status(400).json({ error: 'URL is required' });
     }
     
-    console.log(`Fetching HTML from: ${url}`);
+    log(`Fetching HTML from: ${url}`);
     
     // Inicializar o navegador Puppeteer
     const browser = await puppeteer.launch({
@@ -93,10 +109,6 @@ app.post('/face-get-ads-numbers', async (req, res) => {
       const abc = Array.from(document.querySelectorAll('div,span,p,li,a,h1,h2,h3,h4,h5,h6'))
       const el = abc.find(e => /~\s*\d+\s*results?/i.test(String(e.textContent)));
       const match = /~\s*(\d+)\s*results?/i.exec(el?.textContent || '');
-      
-      console.log("abc", abc)
-      console.log("el", el)
-      console.log("match", match)
 
       return match ? match[1] : null;
     });
@@ -104,7 +116,7 @@ app.post('/face-get-ads-numbers', async (req, res) => {
     return res.json({ results: result });
 
   } catch (error: unknown) {
-    console.error('Error fetching HTML:', error);
+    log('Error fetching HTML:' + JSON.stringify(error));
     
     // Tratamento seguro do erro
     let errorMessage = 'Unknown error';

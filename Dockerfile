@@ -43,7 +43,8 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN yarn install && yarn build
 
 # Expõe a porta 3000
-EXPOSE 3000
+EXPOSE 5500
+ENV PORT=5500
 
 # Comando para rodar o servidor
 CMD ["node", "dist/index.js"]

@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "docker:build": "docker build -t scrapping-as-a-service .",
+    "docker:run": "docker run -p 5500:5500 scrapping-as-a-service"
   },
   "dependencies": {
     "express": "^4.18.2",

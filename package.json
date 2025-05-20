@@ -8,9 +8,9 @@
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "docker:build": "docker build -t scrapping-as-a-service .",
-    "docker:run": "docker run -p 5500:5500 scrapping-as-a-service",
-    "pull": "git pull && yarn && docker rm -f $(docker ps -aq) && yarn docker:build && docker run -d -p 5500:5500 scrapping-as-a-service && docker ps",
-    "restart": "yarn && docker rm -f $(docker ps -aq) && yarn docker:build && docker run -d -p 5500:5500 scrapping-as-a-service && docker ps"
+    "docker:run": "docker run --restart always -d -p 5500:5500 scrapping-as-a-service",
+    "pull": "git pull && yarn && docker rm -f $(docker ps -aq) && yarn docker:build && yarn docker:run",
+    "restart": "yarn && docker rm -f $(docker ps -aq) && yarn docker:build && yarn docker:run"
   },
   "dependencies": {
     "axios": "^1.9.0",

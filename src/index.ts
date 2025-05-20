@@ -1,6 +1,6 @@
 import axios from 'axios';
 import express from 'express';
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,54 +22,56 @@ const log = (message: string) => {
 // Middleware para processar JSON
 app.use(express.json());
 
+// Variável para armazenar a instância do navegador
+let browser: Browser | null = null;
+
+async function getBrowser(): Promise<Browser> {
+  if (!browser) {
+    console.log("Starting a new browser instance");
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    console.log("Browser started");
+  }
+  return browser;
+}
+
+// Endpoint POST para receber uma URL e retornar o HTML
 // Endpoint POST para receber uma URL e retornar o HTML
 app.post('/fetch-html', async (req, res) => {
   try {
     const { url } = req.body;
-    
+
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
-    
+
     console.log(`Fetching HTML from: ${url}`);
-    
-    // Inicializar o navegador Puppeteer
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    console.log("Browser started")
-    
+
+    // Obter a instância do navegador (cria nova se não existir)
+    const browserInstance = await getBrowser();
+
     // Criar uma nova página
-    const page = await browser.newPage();
-    console.log("Start new page")
-    
+    const page = await browserInstance.newPage();
+    console.log("Start new page");
+
     // Navegar para a URL fornecida
     await page.goto(url, {
       waitUntil: 'networkidle2',
       timeout: 30000
     });
-    console.log("Navigate to " + url)
-    
-    let result;
-    // if (querySelector) {
-    //   // Faz o scrapping diretamente no contexto do navegador
-    //   result = await page.$eval(querySelector, els => els.map(el => el.outerHTML));
-    //   await browser.close();
-    //   return res.json({ results: result });
-    // } else {
-      // Retorna o HTML completo
+    console.log("Navigate to " + url);
 
-      const html = await page.content();
-      console.log("HTML resulted")
+    const html = await page.content();
+    console.log("HTML resulted");
 
-      await browser.close();
+    await page.close();
+    console.log('Close page');
 
-      console.log('Close browser')
-      return res.json({ html });
-    // }
+    return res.json({ html });
 
-  } catch (error: unknown) {    
+  } catch (error: unknown) {
     // Tratamento seguro do erro
     let errorMessage = 'Unknown error';
     if (error instanceof Error) {
@@ -81,7 +83,6 @@ app.post('/fetch-html', async (req, res) => {
     }
 
     console.log('Error fetching HTML: ' + errorMessage);
-    
     res.status(500).json({ error: 'Failed to fetch HTML', details: errorMessage });
   }
 });

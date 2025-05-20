@@ -174,7 +174,7 @@ app.post('/face-get-ads-numbers-batch', async (req, res) => {
         results.push(''); // Se falhar, adiciona string vazia
       }
       if (i < urls.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Espera 10 segundos
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Espera 10 segundos
       }
     }
     return res.json({ results });

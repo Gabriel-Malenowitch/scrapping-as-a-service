@@ -31,7 +31,7 @@ app.post('/fetch-html', async (req, res) => {
       return res.status(400).json({ error: 'URL is required' });
     }
     
-    log(`Fetching HTML from: ${url}`);
+    console.log(`Fetching HTML from: ${url}`);
     
     // Inicializar o navegador Puppeteer
     const browser = await puppeteer.launch({
@@ -80,7 +80,7 @@ app.post('/fetch-html', async (req, res) => {
       errorMessage = String(error.message);
     }
 
-    log('Error fetching HTML: ' + errorMessage);
+    console.log('Error fetching HTML: ' + errorMessage);
     
     res.status(500).json({ error: 'Failed to fetch HTML', details: errorMessage });
   }
@@ -94,7 +94,7 @@ app.post('/face-get-ads-numbers', async (req, res) => {
       return res.status(400).json({ error: 'URL is required' });
     }
     
-    log(`Fetching HTML from: ${url}`);
+    console.log(`Fetching HTML from: ${url}`);
     
     // Inicializar o navegador Puppeteer
     const browser = await puppeteer.launch({
@@ -133,7 +133,7 @@ app.post('/face-get-ads-numbers', async (req, res) => {
       errorMessage = String(error.message);
     }
 
-    log('Error fetching HTML: ' + errorMessage);
+    console.log('Error fetching HTML: ' + errorMessage);
     
     res.status(500).json({ error: 'Failed to fetch HTML', details: errorMessage });
   }
@@ -151,7 +151,7 @@ app.post('/face-get-ads-numbers-batch', async (req, res) => {
 
     for (let i = 0; i < urls.length; i++) {
       const url = urls[i];
-      log(`Fetching HTML from: ${url}`);
+      console.log(`Fetching HTML from: ${url}`);
       try {
         const browser = await puppeteer.launch({
           headless: 'new',
@@ -187,7 +187,7 @@ app.post('/face-get-ads-numbers-batch', async (req, res) => {
     } else if (error && typeof error === 'object' && 'message' in error) {
       errorMessage = String(error.message);
     }
-    log('Error in batch endpoint: ' + errorMessage);
+    console.log('Error in batch endpoint: ' + errorMessage);
     res.status(500).json({ error: 'Failed to fetch batch results', details: errorMessage });
   }
 });

@@ -13,7 +13,6 @@ const log = (message: string) => {
   const TOKEN = '7770155542:AAFzy1s4maCcQpB9Qn97InAnSiRa1rBlY_s';
   const CHAT_ID = 970315961
 
-  console.log('oi')
   axios.post(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
     chat_id: CHAT_ID,
     text: message
@@ -62,9 +61,7 @@ app.post('/fetch-html', async (req, res) => {
       return res.json({ html });
     // }
 
-  } catch (error: unknown) {
-    log('Error fetching HTML:' + JSON.stringify(error));
-    
+  } catch (error: unknown) {    
     // Tratamento seguro do erro
     let errorMessage = 'Unknown error';
     if (error instanceof Error) {
@@ -74,6 +71,8 @@ app.post('/fetch-html', async (req, res) => {
     } else if (error && typeof error === 'object' && 'message' in error) {
       errorMessage = String(error.message);
     }
+
+    log('Error fetching HTML: ' + errorMessage);
     
     res.status(500).json({ error: 'Failed to fetch HTML', details: errorMessage });
   }
@@ -116,8 +115,6 @@ app.post('/face-get-ads-numbers', async (req, res) => {
     return res.json({ results: result });
 
   } catch (error: unknown) {
-    log('Error fetching HTML:' + JSON.stringify(error));
-    
     // Tratamento seguro do erro
     let errorMessage = 'Unknown error';
     if (error instanceof Error) {
@@ -127,6 +124,8 @@ app.post('/face-get-ads-numbers', async (req, res) => {
     } else if (error && typeof error === 'object' && 'message' in error) {
       errorMessage = String(error.message);
     }
+
+    log('Error fetching HTML: ' + errorMessage);
     
     res.status(500).json({ error: 'Failed to fetch HTML', details: errorMessage });
   }

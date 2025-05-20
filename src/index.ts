@@ -38,15 +38,18 @@ app.post('/fetch-html', async (req, res) => {
       headless: 'new',
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
+    console.log("Browser started")
     
     // Criar uma nova página
     const page = await browser.newPage();
+    console.log("Start new page")
     
     // Navegar para a URL fornecida
     await page.goto(url, {
       waitUntil: 'networkidle2',
       timeout: 30000
     });
+    console.log("Navigate to " + url)
     
     let result;
     // if (querySelector) {
@@ -56,8 +59,13 @@ app.post('/fetch-html', async (req, res) => {
     //   return res.json({ results: result });
     // } else {
       // Retorna o HTML completo
+
       const html = await page.content();
+      console.log("HTML resulted")
+
       await browser.close();
+
+      console.log('Close browser')
       return res.json({ html });
     // }
 

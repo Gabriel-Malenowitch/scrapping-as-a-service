@@ -6,6 +6,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 let browser: Browser | null = null;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 async function getBrowser(): Promise<Browser> {
   if (!browser) {
